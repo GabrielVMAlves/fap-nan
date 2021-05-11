@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NaN.Interfaces.Services;
 using NaN.Models;
-using NaN.Models.Entity;
+using NaN.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace NaN.Controllers
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -44,11 +44,14 @@ namespace NaN.Controllers
             {
                 List<User> result = _userService.GetUserByFunction(gameId, functionId);
 
+                if (result.Count == 0)
+                    throw new ErrorHandling(404, "Not Found", "Cant find a user with this attributes");
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -60,11 +63,14 @@ namespace NaN.Controllers
             {
                 List<User> result = _userService.GetUserByRank(gameId, rankId);
 
+                if (result.Count == 0)
+                    throw new ErrorHandling(404, "Not Found", "Cant find a user with this attributes");
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -76,11 +82,14 @@ namespace NaN.Controllers
             {
                 List<User> result = _userService.GetUserByGame(gameId);
 
+                if (result.Count == 0)
+                    throw new ErrorHandling(404, "Not Found", "Cant find a user with this attributes");
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -92,11 +101,14 @@ namespace NaN.Controllers
             {
                 List<User> result = _userService.GetUserByName(userName);
 
+                if (result.Count == 0)
+                    throw new ErrorHandling(404, "Not Found", "Cant find a user with this attributes");
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -108,11 +120,14 @@ namespace NaN.Controllers
             {
                 List<User> result = _userService.GetUserByProfile(profile);
 
+                if (result.Count == 0)
+                    throw new ErrorHandling(404, "Not Found", "Cant find a user with this attributes");
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -124,11 +139,14 @@ namespace NaN.Controllers
             {
                 User result = _userService.GetUserById(userId);
 
+                if (result == null)
+                    throw new ErrorHandling(404, "Not Found", "Cant find a user with this attribute");
+
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -146,7 +164,7 @@ namespace NaN.Controllers
             }
             catch(Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -164,7 +182,7 @@ namespace NaN.Controllers
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
         }
 
@@ -179,8 +197,17 @@ namespace NaN.Controllers
             }
             catch (Exception ex)
             {
-                return ValidationProblem();
+                return Error(ex);
             }
+        }
+
+        private ObjectResult Error(Exception ex)
+        {
+            if (ex is ErrorHandling eh)
+            {
+                return Problem(eh.Message, statusCode: eh.Code, type: eh.Type);
+            }
+            return Problem(ex.Message, statusCode: 500, type: ex.GetType().Name);
         }
     }
 }

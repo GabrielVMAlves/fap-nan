@@ -1,7 +1,7 @@
 ﻿using NaN.Interfaces.Repositorys;
 using NaN.Interfaces.Services;
 using NaN.Models;
-using NaN.Models.Entity;
+using NaN.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +24,8 @@ namespace NaN.Services
 
         public User CreateUser(User user)
         {
+            ValidateBeforeCreate(user);
+
             user.Id = _userRepository.CreateUser(user);
 
             foreach (Game_User game in user.Game_User)
@@ -39,6 +41,8 @@ namespace NaN.Services
 
         public User UpdateUser(User user)
         {
+            Validate(user);
+
             _userRepository.UpdateUser(user);
             foreach (Game_User game in user.Game_User)
             {
@@ -90,6 +94,31 @@ namespace NaN.Services
             return _userRepository.ListAllUsers();
         }
 
-        
+        private void ValidateBeforeCreate(User user)
+        {
+            user.Id = 1;
+
+            Validate(user);
+        }
+
+        private void Validate(User user)
+        {
+            if (user.Id <= 0 || user.Id == null)
+                throw new ErrorHandling(400, "Validation Exception", "Invalid Id for User, try to reload de page an try gain!");
+            if(user.Name.Length > 145)
+                throw new ErrorHandling(400, "Validation Exception", "Name cannot have more than 145 characters!");
+            if (user.Name.Length < 5)
+                throw new ErrorHandling(400, "Validation Exception", "Name cannot have less than 5 characters!");
+            if (user.Contact.Length > 125)
+                throw new ErrorHandling(400, "Validation Exception", "Contact cannot have more than 125 characters!");
+        }
+
+        private void ValidateGames(Game_User game)
+        {
+            if (game.User_Profile.Length > 200)
+                throw new ErrorHandling(400, "Validation Exception", "Profile cannot have more than 200 characters!");
+            if (game.User_Profile.Length < 5)
+                throw new ErrorHandling(400, "Validation Exception", "Profile cannot have less than 5 characters!");
+        }
     }
 }

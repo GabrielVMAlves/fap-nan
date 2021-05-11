@@ -1,5 +1,4 @@
 ﻿using NaN.Models;
-using NaN.Models.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

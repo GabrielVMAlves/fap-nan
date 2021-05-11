@@ -8,8 +8,6 @@ using System.Data;
 using Dapper;
 using System.Linq;
 using System.Transactions;
-using NaN.Models.Entity;
-
 namespace NaN.Repositorys
 {
     public class UserRepository : IUserRepository

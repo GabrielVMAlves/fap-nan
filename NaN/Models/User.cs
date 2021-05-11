@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NaN.Models.Entity
+namespace NaN.Models
 {
     public class User
     {
